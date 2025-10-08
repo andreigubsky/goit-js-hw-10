@@ -1,0 +1,21 @@
+.back-link{
+    margin-bottom: 24px;
+    display: block;
+    width: 100px;
+}
+.timer{
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 24px;
+}
+.field{
+    display: flex;
+    flex-direction: column;
+}
+.value{
+    font-size: 40px;
+}
+span.label{
+    text-transform: uppercase;
+}
