@@ -46,17 +46,20 @@ function showFulfilled(delay) {
     });
 }
 
-const makePromise = ({ delay, shouldResolve = true }) => {
+const makePromise = ({ delay, shouldResolve = false }) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            if (shouldResolve) {
-                resolve(delay)
+            if (!delay || shouldResolve) {
+                reject(error)
             } else {
-                reject(delay)
+                resolve(delay =>  showFulfilled(delay))
             }
         }, delay);
     });
 };
+
+const { promise, resolve, reject } = Promise.withResolvers();
+
 
 
 button.addEventListener('click', event => {
@@ -65,16 +68,22 @@ button.addEventListener('click', event => {
     const choosedOption = getSelectedRadioValue();
     const delay = delayObj.value;
 
-    if (delay > 0 && choosedOption === "fulfilled") {
-        makePromise({ delay: delay })
-            .then(delay => showFulfilled(delay))
-            .catch(error => console.log(error));
-    }
-    if (delay > 0 && choosedOption === "rejected") {
-        makePromise({ value: choosedOption, delay: delay })
-            .then(delay => showRejected(delay))
-            .catch(error => console.log(error));
-    }
+
+    makePromise({ delay: delay }).then(makePromise({ delay: delay })).then(makePromise({ delay: delay })).catch(error => console.log(error));
+
+
+
+
+    // if (choosedOption === "fulfilled") {
+    //     makePromise({ delay: delay })
+    //         .then(delay => showFulfilled(delay))
+    //         .catch(error => console.log(error));
+    // }
+    // if (choosedOption === "rejected") {
+    //     makePromise({ value: choosedOption, delay: delay })
+    //         .then(delay => showRejected(delay))
+    //         .catch(error => console.log(error));
+    // }
     delayObj.value = '';
     unSelectRadios('state');
 
