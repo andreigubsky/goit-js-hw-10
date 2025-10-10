@@ -19,6 +19,7 @@ function getSelectedRadioValue() {
     }
     return selectedValue;
 }
+
 function unSelectRadios() {
     radioButtons.forEach(radio => {
         radio.checked = false;
@@ -35,6 +36,7 @@ function showRejected(delay) {
         position: 'topRight',
     });
 }
+
 function showFulfilled(delay) {
     iziToast.show({
         message: `✅ Fulfilled promise in ${delay}ms`,
@@ -46,82 +48,35 @@ function showFulfilled(delay) {
     });
 }
 
-const makePromise = ({value, delay, shouldResolve}) => {
+const makePromise = ({ value, delay, shouldResolve }) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            if(shouldResolve) {
-				resolve(value)
-			} else {
-				reject(value)
-			}
+            if (shouldResolve) {
+                resolve(showFulfilled(value))
+            } else {
+                reject(showRejected(value))
+            }
         }, delay);
     });
 };
 
-button.addEventListener('submit', event => {
+button.addEventListener('click', event => {
     event.preventDefault();
     const choosedOption = getSelectedRadioValue();
     const delay = delayObj.value;
-    if (choosedOption === "fulfilled") {}
-    if (choosedOption === "rejected") {}
-    makePromise({value: choosedOption, delay: delay, shouldResolve })
-             .then(delay => showFulfilled(delay))
-             .then(delay => showRejected(delay))
-             .catch(error => console.log(error));
+    let radio;
 
-    // if (choosedOption === "fulfilled") {
-    //     makePromise({ delay: delay })
-    //         .then(delay => showFulfilled(delay))
-    //         .catch(error => console.log(error));
-    // }
-    // if (choosedOption === "rejected") {
-    //     makePromise({ value: choosedOption, delay: delay })
-    //         .then(delay => showRejected(delay))
-    //         .catch(error => console.log(error));
-    // }
+    if (choosedOption === "fulfilled") {
+        radio = true;
+    }
+    if (choosedOption === "rejected") {
+        radio = false;
+    }
+
+    makePromise({ value: delay, delay: delay, shouldResolve: radio })
+        .catch(error => console.log(error));
 
     delayObj.value = '';
     unSelectRadios('state');
 
 });
-
-//  const promiseArray = [];
-
-//     Promise.all(promiseArray)
-//         .then((results) => console.log(results))
-//         .catch((error) => console.error(error));
-
-// const { promise, resolve, reject } = Promise.withResolvers();
-
-//  const resolved = (delay) => {
-//         return new Promise((resolve, reject) => {
-//             setTimeout(() => {
-                
-//                 resolve(showFulfilled(delay));
-//             }, 1000);
-//         });
-// };
-
-// const rejected = (delay) => {
-//         return new Promise((resolve, reject) => {
-//             setTimeout(() => {
-//                 showRejected(delay);
-//                 resolve(`${delay} -> Крок 2 виконано`);
-//             }, 1000);
-//         });
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
