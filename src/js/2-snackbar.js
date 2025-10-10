@@ -46,33 +46,28 @@ function showFulfilled(delay) {
     });
 }
 
-const makePromise = ({ delay, shouldResolve = false }) => {
+const makePromise = ({value, delay, shouldResolve}) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            if (!delay || shouldResolve) {
-                reject(error)
-            } else {
-                resolve(delay =>  showFulfilled(delay))
-            }
+            if(shouldResolve) {
+				resolve(value)
+			} else {
+				reject(value)
+			}
         }, delay);
     });
 };
 
-const { promise, resolve, reject } = Promise.withResolvers();
-
-
-
-button.addEventListener('click', event => {
+button.addEventListener('submit', event => {
     event.preventDefault();
-
     const choosedOption = getSelectedRadioValue();
     const delay = delayObj.value;
-
-
-    makePromise({ delay: delay }).then(makePromise({ delay: delay })).then(makePromise({ delay: delay })).catch(error => console.log(error));
-
-
-
+    if (choosedOption === "fulfilled") {}
+    if (choosedOption === "rejected") {}
+    makePromise({value: choosedOption, delay: delay, shouldResolve })
+             .then(delay => showFulfilled(delay))
+             .then(delay => showRejected(delay))
+             .catch(error => console.log(error));
 
     // if (choosedOption === "fulfilled") {
     //     makePromise({ delay: delay })
@@ -84,12 +79,37 @@ button.addEventListener('click', event => {
     //         .then(delay => showRejected(delay))
     //         .catch(error => console.log(error));
     // }
+
     delayObj.value = '';
     unSelectRadios('state');
 
 });
 
+//  const promiseArray = [];
 
+//     Promise.all(promiseArray)
+//         .then((results) => console.log(results))
+//         .catch((error) => console.error(error));
+
+// const { promise, resolve, reject } = Promise.withResolvers();
+
+//  const resolved = (delay) => {
+//         return new Promise((resolve, reject) => {
+//             setTimeout(() => {
+                
+//                 resolve(showFulfilled(delay));
+//             }, 1000);
+//         });
+// };
+
+// const rejected = (delay) => {
+//         return new Promise((resolve, reject) => {
+//             setTimeout(() => {
+//                 showRejected(delay);
+//                 resolve(`${delay} -> Крок 2 виконано`);
+//             }, 1000);
+//         });
+// };
 
 
 
