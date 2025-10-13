@@ -4,20 +4,15 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 
-const delayObj = document.querySelector("input[name='delay']");
+
 const radioButtons = document.querySelectorAll("input[type='radio']");
 const button = document.querySelector('button');
 
 function getSelectedRadioValue() {
-    let selectedValue = '';
-
-    for (let i = 0; i < radioButtons.length; i++) {
-        if (radioButtons[i].checked) {
-            selectedValue = radioButtons[i].value;
-            break;
-        }
+    for (const radio of radioButtons) {
+        if (radio.checked) return radio.value;
     }
-    return selectedValue;
+    return '';
 }
 
 function unSelectRadios() {
@@ -48,13 +43,13 @@ function showFulfilled(delay) {
     });
 }
 
-const makePromise = ({ value, delay, shouldResolve }) => {
+const makePromise = ({ delay, shouldResolve }) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             if (shouldResolve) {
-                resolve(showFulfilled(value))
+                resolve(delay)
             } else {
-                reject(showRejected(value))
+                reject(delay)
             }
         }, delay);
     });
@@ -62,21 +57,44 @@ const makePromise = ({ value, delay, shouldResolve }) => {
 
 button.addEventListener('click', event => {
     event.preventDefault();
+    const delayObj = document.querySelector("input[name='delay']");
     const choosedOption = getSelectedRadioValue();
-    const delay = delayObj.value;
-    let radio;
+    const delay = Number(delayObj.value);
 
-    if (choosedOption === "fulfilled") {
-        radio = true;
+    if (!delay || isNaN(delay)) {
+        iziToast.error({
+            message: '❗ Введіть коректне число для затримки',
+            messageColor: '#ffffff',
+            backgroundColor: '#fe5549',
+            progressBar: false,
+            timeout: 2000,
+            position: 'topRight',
+        });
+        return;
     }
-    if (choosedOption === "rejected") {
-        radio = false;
+    if (!choosedOption) {
+        iziToast.error({
+            message: '❗ Оберіть fulfilled або rejected',
+            messageColor: '#ffffff',
+            backgroundColor: '#fe5549',
+            progressBar: false,
+            timeout: 2000,
+            position: 'topRight',
+        });
+        return;
     }
 
-    makePromise({ value: delay, delay: delay, shouldResolve: radio })
-        .catch(error => console.log(error));
+    const shouldResolve = choosedOption === "fulfilled";
+
+    makePromise({ delay, shouldResolve })
+        .then((delay) => {
+            showFulfilled(delay);
+        })
+        .catch((delay) => {
+            showRejected(delay);
+        });
 
     delayObj.value = '';
-    unSelectRadios('state');
+    unSelectRadios();
 
 });

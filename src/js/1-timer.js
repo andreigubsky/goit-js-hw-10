@@ -27,7 +27,7 @@ const options = {
   },
 };
 const fp = flatpickr("#datetime-picker", options);
-
+button.disabled = true;
 // Натисканням на кнопку «Start» починається зворотний 
 // відлік часу до обраної дати з моменту натискання.
 
@@ -45,7 +45,6 @@ function timer(endTime) {
       // поки йде відлік часу.
       button.disabled = true;
       fp.input.disabled = true;
-      fp.destroy();
 
       daysCounter.textContent = addLeadingZero(String(convertMs(timeInterval).days));
       hoursCounter.textContent = addLeadingZero(String(convertMs(timeInterval).hours));
@@ -53,18 +52,22 @@ function timer(endTime) {
       secondsCounter.textContent = addLeadingZero(String(convertMs(timeInterval).seconds));
     }
     else {
-      clearTimeout(timerId);
+      clearInterval(timerId);
 
       //  Після зупинки таймера інпут стає активним, 
       // щоб користувач міг обрати наступну дату. Кнопка залишається не активною.
 
       button.disabled = false;
       fp.input.disabled = false;
-      flatpickr("#datetime-picker", options);
+
+      daysCounter.textContent = '00';
+      hoursCounter.textContent = '00';
+      minutesCounter.textContent = '00';
+      secondsCounter.textContent = '00';
     }
 
   }, 1000);
-
+``
 }
 
 // Якщо користувач вибрав валідну дату (в майбутньому), кнопка «Start» стає активною.
@@ -96,7 +99,6 @@ function checkDate(distance) {
   return;
 
 }
-
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
